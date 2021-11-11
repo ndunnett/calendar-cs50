@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block head %}<link href="{% static 'css/calendar.css' %}" rel="stylesheet">{% endblock %}
+{% block titlepage %}{{ calendar_date|date:"Y" }} Calendar{% endblock %}
+{% block headerclass %}{% endblock %}
+
+{% block content %}
+{{ modals }}
+<div class="container calendar">
+  <div class="d-flex justify-content-between mb-3">
+    <a type="button" class="btn btn-sm btn-primary" href="{% url 'year' previous_year %}">{{ previous_year }}</a>
+    {{ year_name }}
+    <a type="button" class="btn btn-sm btn-primary" href="{% url 'year' next_year %}">{{ next_year }}</a>
+  </div>
+  {{ calendar }}
+</div>
+{% endblock %}

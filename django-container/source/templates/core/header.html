@@ -1,0 +1,52 @@
+{% load static %}
+<div class="header-container container">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <span class="navbar-brand" href="#">
+        <img src="{% static 'img/logo.svg' %}" class="navbar-logo" alt="" height="64">
+      </span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav me-auto mb-2 mb-lg-0">
+          <div class="dropdown">
+            <a href="#" class="nav-link dropdown-toggle{{ calendar_active }}" id="dropdownCalendar" data-bs-toggle="dropdown" aria-expanded="false">
+              Calendar
+            </a>
+            <div class="dropdown-menu text-small shadow" aria-labelledby="dropdownCalendar">
+              {% if user.is_authenticated %}
+              {% if perms.cal.add_booking %}
+              <a class="dropdown-item" type="button" href="{% url 'booking-create' %}">New booking</a>
+              {% endif %}
+              <a class="dropdown-item" type="button" href="{% url 'booking-list-me' %}">My bookings</a>
+              {% endif %}
+              <a class="dropdown-item" type="button" href="{% url 'booking-list' %}">All bookings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" type="button" href="{% url 'thismonth' %}">This month</a>
+            </div>
+          </div>
+        </div>
+        <div class="navbar-nav dropdown">
+          {% if user.is_authenticated %}
+            <a href="#" class="nav-link dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.profile.get_short_name }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser1">
+              <a class="dropdown-item" type="button" href="{% url 'my_details' %}">My details</a>
+              <a class="dropdown-item" type="button" href="{% url 'password_change' %}">Change password</a>
+              <div class="dropdown-divider"></div>
+              {% if user.is_staff %}
+                <a class="dropdown-item" type="button" href="{% url 'admin:index' %}">Administration</a>
+                <div class="dropdown-divider"></div>
+              {% endif %}
+              <a class="dropdown-item" type="button" href="{% url 'logout' %}">Log out</a>
+            </div>
+          {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Log in</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>

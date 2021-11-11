@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}{% endblock %}
+{% block titlepage %}Edit booking for {{ object.resource.get_name }} ({{ object.project.name }}){% endblock %}
+{% block headerclass %}{% endblock %}
+
+{% block content %}
+{{ modals }}
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <form method="POST">
+        <legend>Booking #{{ object.pk }}</legend>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

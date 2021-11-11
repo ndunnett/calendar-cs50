@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block head %}{% endblock %}
+{% block titlepage %}Booking for {{ object.resource.user.profile.get_name }} ({{ object.project.name }}){% endblock %}
+{% block headerclass %}{% endblock %}
+
+{% block content %}
+{{ modals }}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h3>{% if object.project.client.name != "System" %}Booking #{{ object.pk }}{% else %}{{ object.project.name }}{% endif %}</h3>
+    </div>
+    <div class="col text-end">
+      <div class="btn-group" role="group" aria-label="Booking #{{ booking.pk }}">
+        <a type="button" class="btn btn-sm btn-primary" href="{% url 'month' object.start.year object.start.month %}">Go to {{ object.start|date:"F Y" }}</a>
+        {% if user.is_staff %}<a type="button" class="btn btn-sm btn-primary" href="{% url 'booking-update' object.pk %}">Edit booking</a>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <table class="table table-hover">
+        <thead><tr><th colspan="2">Details</th></tr></thead>
+        <tbody>
+          {% if object.project.client.name != "System" %}
+          <tr><th>Client</th><td>{{ object.project.client.name }}</td></tr>
+          <tr><th>Project</th><td>{{ object.project.name }}</td></tr>
+          {% endif %}{% if object.notes %}
+          <tr><th>Notes</th><td>{{ object.notes }}</td></tr>
+          {% endif %}
+          <tr><th>Start date</th><td>{{ object.start|date:"d/m/Y" }}</td></tr>
+          <tr><th>End date</th><td>{{ object.end|date:"d/m/Y" }}</td></tr>
+          <tr><th>Days booked</th><td>{{ object.days_booked }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <table class="table table-hover">
+        <thead><tr><th colspan="2">Assignment</th></tr></thead>
+        <tbody>
+          <tr><th>Resource</th><td>{{ object.resource.get_name }}</td></tr>
+          <tr><th>Mobile</th><td>{{ object.resource.mobile }}</td></tr>
+          <tr><th>Email</th><td>{{ object.resource.email }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

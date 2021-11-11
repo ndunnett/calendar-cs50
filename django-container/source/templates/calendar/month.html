@@ -1,0 +1,95 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load bookings %}
+{% block head %}<link href="{% static 'css/calendar.css' %}" rel="stylesheet">{% endblock %}
+{% block titlepage %}{{ calendar_date|date:"F Y" }}{% endblock %}
+{% block headerclass %}{% endblock %}
+
+{% block content %}
+{% for booking in object_list %}
+<div class="modal fade" id="booking-{{ booking.pk }}" tabindex="-1" aria-labelledby="booking-{{ booking.pk }}-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="booking-{{ booking.pk }}-label">
+          {% if booking.project.client.name == "System" %}
+          {{ booking.project.name }}
+          {% else %}
+          Booking #{{ booking.pk }}
+          {% endif %}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover">
+          <thead><tr><th colspan="2">Details</th></tr></thead>
+          <tbody>
+            {% if booking.project.client.name != "System" %}
+            <tr><th>Client</th><td>{{ booking.project.client.name }}</td></tr>
+            <tr><th>Project</th><td>{{ booking.project.name }}</td></tr>
+            {% endif %}
+            {% if booking.notes %}
+            <tr><th>Notes</th><td>{{ booking.notes }}</td></tr>
+            {% endif %}
+            <tr><th class="w-25">Start date</th><td>{{ booking.start|date }}</td></tr>
+            <tr><th>End date</th><td>{{ booking.end|date }}</td></tr>
+            <tr><th>Days booked</th><td>{{ booking.days_booked }}</td></tr>
+          </tbody>
+        </table>
+        <table class="table table-hover">
+          <thead><tr><th colspan="2">Assignment</th></tr></thead>
+          <tbody>
+            <tr><th class="w-25">Name</th><td>{{ booking.resource.get_name }}</td></tr>
+            <tr><th>Mobile</th><td>{{ booking.resource.mobile }}</td></tr>
+            <tr><th>Email</th><td>{{ booking.resource.email }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <a type="button" href="{% url 'booking-detail' booking.pk %}" class="btn btn-sm btn-primary">Permanent link</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+<div class="container calendar">
+  <div class="d-flex justify-content-between mb-3">
+    <a type="button" class="btn btn-sm btn-primary" href="{% url 'month' previous_month.year previous_month.month %}">{{ previous_month|date:"M" }}</a>
+    <h3 class="text-center mb-0">{{ month_name }}</h3>
+    <a type="button" class="btn btn-sm btn-primary" href="{% url 'month' next_month.year next_month.month %}">{{ next_month|date:"M" }}</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        {{ week_header }}
+      </thead>
+      <tbody>
+      {% for week in month %}
+        <tr>
+        {% for day, weekday in week %}
+          {% if day == 0 %}
+          <td><div class="disable">&nbsp;</div></td>
+          {% else %}
+          <td{% if day == todays_date.day and calendar_date.month == todays_date.month and calendar_date.year == todays_date.year %} class="today"{% endif %}>
+            <div class="row justify-content-around mb-1">
+              {% if day == todays_date.day and calendar_date.month == todays_date.month and calendar_date.year == todays_date.year %}<div class="day col">Today</div>{% endif %}
+              <div class="day text-end col">{{ day }}</div>
+            </div>
+            {% filtered_bookings object_list day weekday as day_bookings %}
+            {% for booking in day_bookings %}
+            <a role="button" data-bs-toggle="modal" data-bs-target="#booking-{{ booking.pk }}">
+              <div class="badge booking text-truncate" style="background-color:{{ booking.project.background_colour }}; color:{{ booking.project.text_colour }};">
+                {{ booking.resource.get_short_name }}: {{ booking.project.name }}
+              </div>
+            </a>
+            {% endfor %}
+          </td>
+          {% endif %}
+        {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
